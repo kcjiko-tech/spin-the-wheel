@@ -344,8 +344,8 @@
         <div class="stock-counter" id="stockCounter" hidden="hidden" style="display:none"></div>
 
         <!-- Reset Button -->
-        <div class="reset-row" hidden="hidden" style="display:none">
-            <button class="reset-btn" id="resetBtn">↻ Reset Stock</button>
+        <div class="reset-row">
+            <button class="reset-btn" id="resetBtn" hidden="hidden" style="display:none">↻ Reset Stock</button>
         </div>
     </div>
 
@@ -363,16 +363,27 @@
     <script>
         (function() {
             // ---- PRIZE CONFIGURATION ----
+            // 9 slices total:
+            //   3 × 10%
+            //   2 × 20%
+            //   1 × 30%
+            //   1 × Towel
+            //   1 × Ratrepellant
+            //   1 × Free wash
+            // Each slice has its own independent stock.
             const PRIZES = [
-                { id: '100',   label: '10%',            popupName: '10% on Restaurant Bill',  probability: 10, color: '#e63946', initialStock: 200, stock: 200 },
-                { id: '50',    label: '20%',            popupName: '20% on Restaurant Bill',  probability: 20, color: '#f4a261', initialStock: 100, stock: 100 },
-                { id: '20',    label: '30%',            popupName: '30% on Restaurant Bill',  probability: 30, color: '#2a9d8f', initialStock: 40,  stock: 40  },
-                { id: 'towel', label: 'Towel',          popupName: 'Free Towel',              probability: 12, color: '#9c89b8', initialStock: 12,  stock: 12  },
-                { id: 'rat',   label: 'Ratrepellant',   popupName: 'Free Ratrepellant',       probability: 6,  color: '#b5838d', initialStock: 6,   stock: 6   },
-                { id: 'wash',  label: 'Free wash',      popupName: 'Free Wash',               probability: 6,  color: '#6d597a', initialStock: 6,   stock: 6   }
+                { id: '10a',   label: '10%',           popupName: '10% on Restaurant Bill',  probability: 10, color: '#e63946', initialStock: 100, stock: 100 },
+                { id: '20a',   label: '20%',           popupName: '20% on Restaurant Bill',  probability: 20, color: '#f4a261', initialStock: 50,  stock: 50  },
+                { id: '30',    label: '30%',           popupName: '30% on Restaurant Bill',  probability: 30, color: '#2a9d8f', initialStock: 40,  stock: 40  },
+                { id: 'towel', label: 'Towel',         popupName: 'Free Towel',              probability: 12, color: '#9c89b8', initialStock: 12,  stock: 12  },
+                { id: '10b',   label: '10%',           popupName: '10% on Restaurant Bill',  probability: 10, color: '#d62839', initialStock: 100, stock: 100 },
+                { id: 'rat',   label: 'Ratrepellant',  popupName: 'Free Ratrepellant',       probability: 6,  color: '#b5838d', initialStock: 6,   stock: 6   },
+                { id: '20b',   label: '20%',           popupName: '20% on Restaurant Bill',  probability: 20, color: '#e76f51', initialStock: 50,  stock: 50  },
+                { id: 'wash',  label: 'Free wash',     popupName: 'Free Wash',               probability: 6,  color: '#6d597a', initialStock: 6,   stock: 6   },
+                { id: '10c',   label: '10%',           popupName: '10% on Restaurant Bill',  probability: 10, color: '#c1121f', initialStock: 100, stock: 100 }
             ];
 
-            const STORAGE_KEY = 'prizeWheelStock_v1';
+            const STORAGE_KEY = 'prizeWheelStock_v3';
 
             // ---- State ----
             let currentRotation = 0;
@@ -507,10 +518,10 @@
                     ctx.textBaseline = 'middle';
 
                     let label = prize.label;
-                    let fontSize = 24;
-                    if (label.length > 8) fontSize = 18;
-                    if (label.length > 12) fontSize = 15;
-                    if (label.length > 16) fontSize = 13;
+                    let fontSize = 22;
+                    if (label.length > 6) fontSize = 17;
+                    if (label.length > 10) fontSize = 14;
+                    if (label.length > 14) fontSize = 12;
 
                     ctx.font = `bold ${fontSize}px 'Segoe UI', system-ui, sans-serif`;
 
@@ -650,8 +661,8 @@
                         if (prize) {
                             if (prize.stock > 0) {
                                 prize.stock -= 1;
-                                saveStock();              // 💾 persist
-                                updateStockCounter();     // 🔄 live UI
+                                saveStock();
+                                updateStockCounter();
                             }
 
                             drawWheel(currentRotation);
@@ -675,8 +686,8 @@
 
             // ---- Initialize ----
             function init() {
-                loadStock();              // 💾 restore saved stock
-                updateStockCounter();     // 🔄 show counters
+                loadStock();
+                updateStockCounter();
                 drawWheel(0);
 
                 let touchHandled = false;
